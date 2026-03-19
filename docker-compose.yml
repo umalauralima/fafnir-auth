@@ -1,0 +1,24 @@
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"               
+    volumes:
+      - .:/app                    
+    env_file:
+      - .env
+    depends_on:
+      - auth_db
+
+  auth_db:
+    image: mysql:8.1
+    container_name: auth_db
+    env_file:
+      - .env
+    ports:
+      - "3307:3306"  # Mapeia porta 3306 do container para 3307 da máquina
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
