@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from ..extensions import db
 
 class Auth(db.Model):
@@ -23,13 +23,24 @@ class Auth(db.Model):
     active = db.Column(db.Boolean, default=True)
 
     created_at = db.Column(
-        db.DateTime,
-        default=datetime.utcnow,
+        db.DateTime(timezone=True),
+        default=datetime.now(timezone.utc),
         nullable=False
+    )
+
+    last_login_at = db.Column(
+        db.DateTime(timezone=True),
+        nullable=True
     )
 
     __table_args__ = (
         db.UniqueConstraint('email', name='uq_auth_email'),
+    )
+
+    refresh_tokens = db.relationship(
+        "RefreshToken",
+        back_populates="auth",
+        cascade="all, delete-orphan"
     )
 
     def __repr__(self):
