@@ -39,6 +39,7 @@ class AuthService:
         )
         return self.repo.create(user)
     
+    #TODO Guardar o contexto da sessão: ip, user-agent
     def create_refresh_token(self, user_id, refresh_token):
         token_hashed = hashlib.sha256(refresh_token.encode()).hexdigest()
 
