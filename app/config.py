@@ -8,7 +8,11 @@ DB_NAME = os.getenv("MYSQL_DATABASE", "fafnir_db")
 class Config:
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+    JWT_EXPIRATION_SECONDS = os.environ.get("JWT_EXPIRATION_SECONDS", "300")
+    JWT_REFRESH_TOKEN_DAYS = os.environ.get("JWT_EXPIRATION_SECONDS", "7")
+
     FLASK_ENV = os.environ.get("FLASK_ENV", "production")
 
     CATEGORIES_PER_PAGE = 10
