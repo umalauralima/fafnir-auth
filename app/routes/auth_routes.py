@@ -75,7 +75,7 @@ def refresh():
     try:
         payload = jwt.decode(dto.refresh_token, Config.JWT_SECRET_KEY, algorithms=["HS256"])
     except jwt.ExpiredSignatureError:
-        raise Exception("Refresh token expirado")
+        raise_auth_error("AUTH-701")
     
     # Rotaciona a sessão (revoga o antigo)
     service.revoke_session(dto.refresh_token)
@@ -129,7 +129,8 @@ AUTH-004 → Usuário bloqueado
 AUTH-005 → Muitas tentativas de login (rate limit)
 AUTH-006 → Conta não verificada
 # Token / Sessão
-AUTH-007 → Token expirado  OK
+AUTH-700 → Token expirado  OK
+AUTH-701 → Token Refresh expirado  OK
 AUTH-008 → Token inválido  OK
 AUTH-009 → Token não fornecido
 # Requisição / Payload
