@@ -6,7 +6,7 @@ class LoginDTO(BaseModel):
     password: str = Field(...)
 
 class LogoutDTO(BaseModel):
-    email: str = Field(...)
+    refresh_token: str = Field(...)
 
     class Config:
         from_attributes = True
