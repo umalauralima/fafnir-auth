@@ -5,10 +5,13 @@ import jwt
 
 def generate_tokens_login(auth):
     ## Gerando o código de acesso curto
+    
+    ### TODO Retornar as permissões do usuario
     payload = {
         "sub": str(auth.uuid),
-        "roles": None,
-        "permissions": None,
+        "email": auth.email,
+        "roles": [],
+        "permissions": [],
         "exp": datetime.now(timezone.utc) + timedelta(seconds=int(Config.JWT_EXPIRATION_SECONDS))
     }
     access_token = jwt.encode(payload, Config.JWT_SECRET_KEY, algorithm="HS256")

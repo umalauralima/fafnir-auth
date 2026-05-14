@@ -5,6 +5,11 @@ class LoginDTO(BaseModel):
     email: str = Field(...)
     password: str = Field(...)
 
+class CreateUserDTO(BaseModel):
+    name: str = Field(...)
+    email: str = Field(...)
+    password: str = Field(...)
+
 class LogoutDTO(BaseModel):
     refresh_token: str = Field(...)
 
