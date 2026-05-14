@@ -7,9 +7,9 @@ class RefreshToken(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    auth_id = db.Column(
+    user_id = db.Column(
         db.Integer,
-        db.ForeignKey("auth.id", ondelete="CASCADE"),
+        db.ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -21,9 +21,8 @@ class RefreshToken(db.Model):
     created_at = db.Column(db.DateTime(timezone=True), default=datetime.now(timezone.utc))
     
     ip_address = db.Column(db.String(45))
+
     user_agent = db.Column(db.String(255))
 
-    auth = db.relationship("Auth", back_populates="refresh_tokens")
-
     def __repr__(self):
-        return f"<RefreshToken Auth={self.auth_id} revoked={self.is_revoked}>"
+        return f"<RefreshToken User={self.user_id} revoked={self.is_revoked}>"
