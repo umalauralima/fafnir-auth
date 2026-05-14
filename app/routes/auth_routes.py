@@ -12,7 +12,7 @@ from ..config import Config
 from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
 
-from app.dto.auth import LoginDTO, LogoutDTO
+from app.dto.auth import CreateUserDTO, LoginDTO, LogoutDTO
 from ..services.auth import AuthService
 
 auth_bp = Blueprint("auth", __name__)
@@ -41,7 +41,7 @@ def login_user():
     # Salva o token de sessão no banco
     service.create_refresh_token(user.id, refresh_token)
 
-    ## Login = atualiza a coluna last_login_at do Auth
+    ## Login = atualiza a coluna last_login_at do User
     service.login(user.id)
 
     return jsonify({"access_token": access_token, "refresh_token": refresh_token}), 200
@@ -80,10 +80,10 @@ def refresh():
     # Rotaciona a sessão (revoga o antigo)
     service.revoke_session(dto.refresh_token)
 
-    access_token, new_refresh_token = generate_tokens_login(token_in_db.auth)
+    access_token, new_refresh_token = generate_tokens_login(token_in_db.user)
 
     # Salva o token de sessão no banco
-    service.create_refresh_token(token_in_db.auth.id, new_refresh_token)
+    service.create_refresh_token(token_in_db.user_id, new_refresh_token)
 
     return {
         "access_token": access_token,
@@ -96,7 +96,7 @@ def refresh():
 def create_user():
 
     try:
-        dto = LoginDTO(**request.json)
+        dto = CreateUserDTO(**request.json)
     except ValidationError as e:
         return jsonify(e.errors()), 400
 
@@ -110,13 +110,9 @@ def create_user():
         }), 409
     else:
         hashed_password = hash_password(dto.password)
-        new_user = service.create(dto.email, hashed_password)
+        new_user = service.create_default_user(dto, hashed_password)
         return jsonify({
                     "message": "Usuário criado com sucesso",
-                    "data": {
-                        "id": new_user.id,
-                        "email": user.email
-                    }
                 }), 201
 
 

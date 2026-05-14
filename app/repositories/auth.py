@@ -6,12 +6,12 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.models.refresh_token import RefreshToken
 
-from ..models.auth import Auth
+from ..models.users import User
 from ..extensions import db
 
 class AuthRepository:
     def get_user(self, email):
-        stmt = select(Auth).where(Auth.email == email)
+        stmt = select(User).where(User.email == email)
         return db.session.execute(stmt).scalar_one_or_none()
     
     def get_session_by_token(self, refresh_token):
@@ -41,7 +41,7 @@ class AuthRepository:
 
     def update_last_login(self, auth_id):
         try:
-            rows_updated = Auth.query.filter_by(id=auth_id).update({
+            rows_updated = User.query.filter_by(id=auth_id).update({
                 "last_login_at": datetime.now(timezone.utc)
             })
             db.session.commit()
@@ -51,8 +51,14 @@ class AuthRepository:
             print(traceback.format_exc())
             return False
     
-    def create(self, obj):
-        db.session.add(obj)
-        db.session.commit()
-        db.session.refresh(obj)
-        return obj
+    def create(self, user):
+        
+        try:
+            db.session.add(user)
+            db.session.commit()
+            return user
+
+        except Exception as e:
+
+            db.session.rollback()
+            raise e

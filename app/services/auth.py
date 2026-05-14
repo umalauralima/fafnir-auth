@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
 import hashlib
+import uuid
 from ..config import Config 
-from app.models.auth import Auth
+from app.models.users import User
 from app.models.refresh_token import RefreshToken
 
 from ..repositories.auth import AuthRepository
@@ -32,11 +33,16 @@ class AuthService:
 
         return self.repo.logout(dto.uuid)
     
-    def create(self, email, hashed_password):
-        user = Auth(
-            email=email,
-            password_hash=hashed_password
+    def create_default_user(self, dto, hashed_password):
+
+        user_uuid = str(uuid.uuid4())
+        
+        user = User(
+            uuid=user_uuid,
+            email=dto.email,
+            password_hash=hashed_password,
         )
+        
         return self.repo.create(user)
     
     #TODO Guardar o contexto da sessão: ip, user-agent
